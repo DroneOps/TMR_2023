@@ -213,7 +213,7 @@ class TelloAuto(object):
             if self.isClose and not self.prevClose:
                 self.prevClose = self.isClose
                 rospy.loginfo("Trajectory Modified due to collision warning")
-                self.trajectory_list = [[self.real_world_pos.x, (self.real_world_pos.y-2),self.real_world_pos.z,0],[(self.real_world_pos.x+2.5), (self.real_world_pos.y-2),self.real_world_pos.z,0]]
+                self.trajectory_list = [[self.real_world_pos.x, (self.real_world_pos.y-1),self.real_world_pos.z,0],[(self.real_world_pos.x+1.5), (self.real_world_pos.y-1),self.real_world_pos.z,0]]
 
             if abs(command_pos.position.x - self.real_world_pos.x) < self.trajectory_threshold.x:
                 if abs(command_pos.position.y - self.real_world_pos.y) < self.trajectory_threshold.y:
