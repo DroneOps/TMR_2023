@@ -1,0 +1,1 @@
+/home/droneops/Documents/Tello_ROS_ORBSLAM/ROS/tello_catkin_ws/devel/./cmake.lock 216
