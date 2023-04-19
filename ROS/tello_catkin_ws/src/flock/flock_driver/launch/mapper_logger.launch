@@ -65,5 +65,5 @@
 </node> 
 
 <node name="map_to_csv" pkg="flock_driver" type="point_cloud_filter.py" output="screen"/>
-
+<node name="logger" pkg="flock_driver" type="data_logger.py" output="screen"/>
 </launch>
