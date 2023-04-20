@@ -7,13 +7,11 @@ import time
 import platform
 from geometry_msgs.msg import Twist, PoseStamped, Point, Pose, Quaternion
 from sensor_msgs.msg import PointCloud2
-from sensor_msgs import point_cloud2
 from nav_msgs.msg import Path
 from std_msgs.msg import Empty, Bool, Int32, Float32
 from flock_msgs.msg import Flip, FlightData
 import signal
 import math
-from tf.transformations import euler_from_quaternion, quaternion_from_euler
 import kbhit as kb
 
 class Overrider(object):
@@ -38,7 +36,7 @@ class Overrider(object):
         rospy.Subscriber(self.publish_prefix+'flight_data', FlightData, self.flightdata_callback)
 
         #Publishers
-        self.pub_land = rospy.Publisher(self.publish_prefix+'land', Empty, queue_size=1)
+        self.pub_land = rospy.Publisher(self.publish_prefix+'land', Bool, queue_size=1)
 
     def land_callback(self):
         self.land = True
@@ -68,5 +66,3 @@ if __name__ == '__main__':
     thread_2 = Thread(target = overrider.keyboard_checker, args=(overrider))
     thread_1.start()
     thread_2.start()
-    overrider.land_callback() #Check if to keep in main thread or to put it into another thread
-    
