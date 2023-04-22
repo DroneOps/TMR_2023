@@ -67,8 +67,8 @@ class TelloSlamControler(object):
         self.pos_err_derivative = Point()
         self.pos_err_filtered_derivative = Point()
         self.rotation_err_filtered_derivative = 0
-        self.Kp = Point(0.6, 0.6, 1.5)
-        self.Kd = Point(1.0, 1.0, 1.5)
+        self.Kp = Point(0.6, 0.6, 1.25)
+        self.Kd = Point(1.0, 1.0, 1.25)
         self.Kp_yaw = 0.015 # 0.005
         self.Kd_yaw = 0.01 # 0.2 = 360 deg / 38 sec = 9 deg/sec
 
@@ -505,7 +505,7 @@ class TelloSlamControler(object):
                 return
             time.sleep(0.2)
             rospy.loginfo('altitude is {}, desired height is {}'.format(self.altitude, self.calib_altitude_low))
-            if time.time() - t > 1:
+            if time.time() - t > 1.7:
                 if ground_altitude == self.altitude:
                     rospy.loginfo('altitude is fixed, something is wrong.'.format(self.altitude, self.calib_altitude_low))
                     self.pub_twist.publish(self.speed_to_twist())
