@@ -72,7 +72,8 @@ class PointCloudFilter(object):
                     with open(path, 'w') as f:
                         for coord in filtered_map:
                             f.write(str(coord[0]) +" "+ str(coord[1]) +" "+ str(coord[2]) + "\n")
-                    time.sleep(1)
+                    f.close()
+                    time.sleep(5)
 
 if __name__ == '__main__':
     calculator = PointCloudFilter()

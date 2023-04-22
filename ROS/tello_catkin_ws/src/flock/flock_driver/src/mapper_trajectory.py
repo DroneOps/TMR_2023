@@ -215,7 +215,7 @@ class TelloAuto(object):
             if self.lost:
                 #self.pub_land.publish()
                 rospy.loginfo("Trajectory quit due to losing reference")
-                return
+                #return
             
 
             if abs(command_pos.position.x - self.real_world_pos.x) < self.trajectory_threshold.x:
