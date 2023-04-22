@@ -16,4 +16,4 @@ def write2csv(pointvec):
     for coord in pointvec:
         writer.writerow(coord)
 
-write2csv(points_circle(1.1,20,0.8,0.2))
+write2csv(points_circle(1.05,20,1.1,0.2))

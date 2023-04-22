@@ -11,16 +11,12 @@ from flock_msgs.msg import Flip, FlightData
 import math
 import ros_numpy
 import numpy as np
-import csv
 import matplotlib.pyplot as plt
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
-
-
-
 class PointCloudFilter(object):
     def __init__(self):
-        rospy.init_node('drone_distance', anonymous=False)
+        rospy.init_node('point_filter', anonymous=False)
         try: 
             self.id = rospy.get_param('~ID')
         except KeyError:
@@ -35,7 +31,7 @@ class PointCloudFilter(object):
         self.cloud_topic_name = "/orb_slam2_mono/map_points"
         self.map = np.array([],[])
         self.real_world_pos = Point(0,0,0)
-        self.real_world_scale = 1
+        self.real_world_scale = 5.21
 
         #Filter_Params
         self.drone_path_radius = 1
@@ -58,23 +54,25 @@ class PointCloudFilter(object):
         if temp_map.shape[0] > 0:
             temp_map = temp_map[np.all(temp_map != 0, axis=1)]
             if temp_map.shape[0] > 0:
-                for i in range(temp_map.shape[0]-1,0,-1):
+                for i in range(temp_map.shape[0]-1,-1,-1):
                     #print(temp_map.shape)
-                    if(abs(temp_map[i,0])>self.drone_path_radius or abs(temp_map[i,1])>self.drone_path_radius or abs(temp_map[i,2])>self.drone_path_radius):
+                    if(temp_map[i,0]>self.drone_path_radius*2 or temp_map[i,0]<0 or abs(temp_map[i,1])>self.drone_path_radius or temp_map[i,2]<0):
                         temp_map = np.delete(temp_map, (i), axis=0)
             time.sleep(0.2)
         return temp_map
     
     def map2csv(self, path):
             while not rospy.is_shutdown():
-                temp_map = self.map
-                # if temp_map.shape[0] > 0:
-                #     temp_map = temp_map*self.real_world_scale
-                # filtered_map = self.filter_points(temp_map)
-            path_file = open(path, 'w')
-            writer = csv.writer(path_file)
-            for coord in temp_map:
-                writer.writerow(coord)
+                if round(self.real_world_scale,2) != 5.21:
+                    temp_map = self.map
+                    if temp_map.shape[0] > 0:
+                        temp_map = temp_map*self.real_world_scale
+                    filtered_map = self.filter_points(temp_map)
+                    print(filtered_map)
+                    with open(path, 'w') as f:
+                        for coord in filtered_map:
+                            f.write(str(coord[0]) +" "+ str(coord[1]) +" "+ str(coord[2]) + "\n")
+                    time.sleep(1)
 
 if __name__ == '__main__':
     calculator = PointCloudFilter()

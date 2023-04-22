@@ -69,6 +69,7 @@
   <param name="~POSE_TOPIC_NAME" type="string" value="/orb_slam2_mono/pose" />
 </node> 
 
+<node name="override_node" pkg="flock_driver" type="override_node.py" output="screen" launch-prefix="gnome-terminal --command"/>
 
 
 </launch>

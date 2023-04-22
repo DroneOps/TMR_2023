@@ -18,7 +18,7 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 class TelloAuto(object):
     """Wrapper class to enable the autonomous navigation."""
     def __init__(self):
-        rospy.init_node('tello_auto', anonymous=False)
+        rospy.init_node('mapper_node', anonymous=False)
 
         try: 
             self.id = rospy.get_param('~ID')
@@ -51,6 +51,8 @@ class TelloAuto(object):
         self.trajectory_list = []
         self.last_trajectory = []
 
+        self.real_world_scale = 5.21
+
         self.cloud_topic_name = "/orb_slam2_mono/map_points"
         
         self.map = list()
@@ -68,10 +70,10 @@ class TelloAuto(object):
         rospy.Subscriber("/orb_slam2_mono/isLost", Bool, self.is_lost_callback)
         rospy.Subscriber('/distCalc/collision_warning', Bool, self.collision_handler)
         rospy.Subscriber(self.publish_prefix+'orientation', Point, self.orientation_callback)
+        rospy.Subscriber('/tello/land', Empty, self.land_callback)
 
         self.command_pos_publisher = rospy.Publisher(self.publish_prefix+'command_pos', Pose, queue_size = 1)
         self.pub_takeoff = rospy.Publisher(self.publish_prefix+'takeoff', Empty, queue_size=1)
-        self.pub_land = rospy.Publisher(self.publish_prefix+'land', Empty, queue_size=1)
         self.pub_allow_slam_control = rospy.Publisher(self.publish_prefix+'allow_slam_control', Bool, queue_size=1)
         self.cmd_val_publisher = rospy.Publisher(self.publish_prefix+'cmd_vel', Twist, queue_size = 1)
         self.calibrate_real_world_scale_publisher = rospy.Publisher(self.publish_prefix+'calibrate_real_world_scale', Empty, queue_size = 1)
@@ -82,6 +84,7 @@ class TelloAuto(object):
         self.path_publisher = rospy.Publisher(self.publish_prefix+'path', Path, queue_size = 1)
         self.take_picure_publisher = rospy.Publisher(self.publish_prefix+'take_picure', Empty, queue_size=1)
         self.merge_coordinates_pub = rospy.Publisher(self.publish_prefix+'TransformerState', Bool, queue_size=1)
+        self.pub_land = rospy.Publisher('/tello/land', Empty, queue_size=1)
         
         self.publish_command()
 
@@ -103,6 +106,8 @@ class TelloAuto(object):
 
     def calibrate_z_callback(self):
         self.calibrate_real_world_scale_publisher.publish()
+        while(round(self.real_world_scale,2) == 5.21):
+            time.sleep(0.1)
 
     def scan_room_left_callback(self):
         rospy.loginfo('pressed Scan Room Left!')
@@ -151,8 +156,6 @@ class TelloAuto(object):
 
     def trajectory_kill_callback(self):
         self.trajectory_kill = True
-
-
 
     def load_trajectory_from_csv(self, trajectory_path):
         print(trajectory_path)
@@ -210,7 +213,7 @@ class TelloAuto(object):
                 return
             
             if self.lost:
-                self.land_callback()
+                #self.pub_land.publish()
                 rospy.loginfo("Trajectory quit due to losing reference")
                 return
             
@@ -239,6 +242,7 @@ class TelloAuto(object):
 
             else:
                 rospy.loginfo("Trajectory Finished")
+                self.pub_land.publish()
                 self.land_callback()
                 return
             
@@ -321,9 +325,17 @@ class TelloAuto(object):
         self.command_pos_publisher.publish(self.command_pos)
 
     def init_drone(self):
+        raw_input()
         self.takeoff()
         self.allow_slam_control = False
         self.pub_allow_slam_control.publish(self.allow_slam_control)
+        time.sleep(12)
+        self.load_trajectory_from_csv('/home/droneops/Documents/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/mapper.csv')
+        print("Loaded trajectory")
+        self.calibrate_z_callback()
+        self.allow_slam_control = True
+        self.pub_allow_slam_control.publish(controller.allow_slam_control)
+        self.trajectory_publish_callback()
 
     def stay_in_place(self):
         self.point_command_pos.x = self.real_world_pos.x
@@ -340,24 +352,10 @@ class TelloAuto(object):
         self.current_mux = 1-self.current_mux
         self.pub_mux.publish(self.current_mux)
 
-    def land_callback(self):
+    def land_callback(self,msg):
         self.land = True
-        self.pub_land.publish()
-
+  
 if __name__ == '__main__':
     controller = TelloAuto()
-    raw_input()
     controller.init_drone()
-    raw_input()
-    controller.calibrate_z_callback()
-    raw_input()
-    controller.load_trajectory_from_csv('/home/droneops/Documents/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/mapper.csv')
-    print("Loaded trajectory")
-    raw_input()
-    controller.allow_slam_control = True
-    controller.pub_allow_slam_control.publish(controller.allow_slam_control)
-    controller.trajectory_publish_callback()
-    raw_input()
-    controller.land_callback()
-
    

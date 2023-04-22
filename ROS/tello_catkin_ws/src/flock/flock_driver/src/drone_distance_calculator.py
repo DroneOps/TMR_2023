@@ -35,11 +35,11 @@ class DistanceCalculator(object):
         self.map = np.array([],[])
         self.CollisionWarning = False
         self.real_world_pos = Point(0,0,0)
-        self.real_world_scale = 1
+        self.real_world_scale = 5.21
 
         #Subscribers
         rospy.Subscriber('/tello/real_world_scale', Float32, self.real_world_scale_callback)
-        rospy.Subscriber('/orb_slam2_mono/pose', PoseStamped, self.real_world_pos_callback)
+        rospy.Subscriber('/tello/real_world_pos', PoseStamped, self.real_world_pos_callback)
         rospy.Subscriber(self.cloud_topic_name, PointCloud2, self.point_cloud_callback)
         #Publishers
         self.collider_pub = rospy.Publisher(self.publish_prefix+'collision_warning', Bool, queue_size=1)
@@ -65,7 +65,8 @@ class DistanceCalculator(object):
                             #temp_map = np.delete(temp_map, (i), axis=0)
                     if(temp_map.shape[0] > 0 and self.real_world_pos):
                         temp_map = temp_map[temp_map[:, 0].argsort()]
-                        if(self.real_world_pos.x > temp_map[0, 0] * 7/16):
+                        print(temp_map[0, 0]*self.real_world_scale - self.real_world_pos.x)
+                        if(temp_map[0, 0]*self.real_world_scale - self.real_world_pos.x < .7):
                             self.CollisionWarning = True
             time.sleep(0.2)
         return

@@ -18,7 +18,7 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 class TelloAuto(object):
     """Wrapper class to enable the autonomous navigation."""
     def __init__(self):
-        rospy.init_node('tello_auto', anonymous=False)
+        rospy.init_node('wall_land', anonymous=False)
 
         try: 
             self.id = rospy.get_param('~ID')
@@ -66,6 +66,7 @@ class TelloAuto(object):
         #rospy.Subscriber(self.cloud_topic_name, PointCloud2, self.point_cloud_callback)
         rospy.Subscriber("/orb_slam2_mono/isLost", Bool, self.is_lost_callback)
         rospy.Subscriber('/distCalc/collision_warning', Bool, self.collision_handler)
+        rospy.Subscriber('/tello/land', Empty, self.land_callback)
 
         self.command_pos_publisher = rospy.Publisher(self.publish_prefix+'command_pos', Pose, queue_size = 1)
         self.pub_takeoff = rospy.Publisher(self.publish_prefix+'takeoff', Empty, queue_size=1)
@@ -101,6 +102,8 @@ class TelloAuto(object):
 
     def calibrate_z_callback(self):
         self.calibrate_real_world_scale_publisher.publish()
+        while(round(self.real_world_scale,2) == 5.21):
+            time.sleep(0.1)
 
     def scan_room_left_callback(self):
         rospy.loginfo('pressed Scan Room Left!')
@@ -199,17 +202,15 @@ class TelloAuto(object):
             if self.land:
                 rospy.loginfo("Trajectory quit due to landing")
                 return
-
             if self.trajectory_kill:
                 rospy.loginfo("Trajectory quit due to killing command")
                 return
-            
             if self.lost:
-                self.land_callback()
+                self.pub_land.publish()
                 rospy.loginfo("Trajectory quit due to losing reference")
                 return
             if self.isClose:
-                self.land_callback()
+                self.pub_land.publish()
                 rospy.loginfo("Trajectory quit due to collision warning")
                 return
 
@@ -237,7 +238,7 @@ class TelloAuto(object):
 
             else:
                 rospy.loginfo("Trajectory Finished")
-                self.land()
+                self.pub_land.publish()
                 return
         return
 
@@ -316,11 +317,19 @@ class TelloAuto(object):
         self.command_pos_publisher.publish(self.command_pos)
 
     def init_drone(self):
+        raw_input()
         self.takeoff()
         self.allow_slam_control = False
         self.pub_allow_slam_control.publish(self.allow_slam_control)
+        time.sleep(13)
+        self.load_trajectory_from_csv('/home/droneops/Documents/Tello_ROS_ORBSLAM/ROS/tello_catkin_ws/src/flock/flock_driver/src/test.csv')
+        print("Loaded trajectory")
+        self.calibrate_z_callback()
+        self.allow_slam_control = True
+        self.pub_allow_slam_control.publish(controller.allow_slam_control)
+        self.trajectory_publish_callback()
 
-    def stay_in_place(self):
+    def stay_in_place(self):    
         self.point_command_pos.x = self.real_world_pos.x
         self.point_command_pos.y = self.real_world_pos.y
         self.point_command_pos.z = self.real_world_pos.z
@@ -335,21 +344,11 @@ class TelloAuto(object):
         self.current_mux = 1-self.current_mux
         self.pub_mux.publish(self.current_mux)
 
-    def land_callback(self):
+    def land_callback(self,msg):
         self.land = True
-        self.pub_land.publish()
 
 if __name__ == '__main__':
     controller = TelloAuto()
-    raw_input()
     controller.init_drone()
-    controller.load_trajectory_from_csv('/home/droneops/Documents/Tello_ROS_ORBSLAM/ROS/tello_catkin_ws/src/flock/flock_driver/src/test.csv')
-    print("Loaded trajectory")
-    raw_input()
-    controller.allow_slam_control = True
-    controller.pub_allow_slam_control.publish(controller.allow_slam_control)
-    controller.trajectory_publish_callback()
-    raw_input()
-    controller.land_callback()
 
    
