@@ -94,3 +94,9 @@ catkin build
 echo "source $PWD/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
+### Clone
+```
+cd ~/ROS
+git clone https://github.com/DroneOps/TMR_2023.git
+```
+
