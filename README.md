@@ -4,7 +4,7 @@
 
 ## Setup
 
-### Preequisites:
+### Prerequisites:
 Fresh install of ubuntu 18.04
 
 ### Install ROS Melodic 
