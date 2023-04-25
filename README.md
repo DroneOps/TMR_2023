@@ -1,9 +1,11 @@
 # TMR_2023
 
-## Requisites:
-Fresh install of ubuntu 18.04
+
 
 ## Setup
+
+### Preequisites:
+Fresh install of ubuntu 18.04
 
 ### Install ROS Melodic 
 Follow this page
