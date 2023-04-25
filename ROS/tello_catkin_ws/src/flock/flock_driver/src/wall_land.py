@@ -59,6 +59,8 @@ class TelloAuto(object):
         self.kp = Pose() 
         self.lost = False
         self.isClose = False
+
+        self.real_world_scale = 5.21
         
         rospy.Subscriber(self.publish_prefix+'flight_data', FlightData, self.flightdata_callback)
         rospy.Subscriber(self.publish_prefix+'real_world_scale', Float32, self.real_world_scale_callback)
@@ -205,10 +207,10 @@ class TelloAuto(object):
             if self.trajectory_kill:
                 rospy.loginfo("Trajectory quit due to killing command")
                 return
-            if self.lost:
-                self.pub_land.publish()
-                rospy.loginfo("Trajectory quit due to losing reference")
-                return
+            # if self.lost:
+            #     self.pub_land.publish()
+            #     rospy.loginfo("Trajectory quit due to losing reference")
+            #     return
             if self.isClose:
                 self.pub_land.publish()
                 rospy.loginfo("Trajectory quit due to collision warning")
@@ -239,6 +241,7 @@ class TelloAuto(object):
             else:
                 rospy.loginfo("Trajectory Finished")
                 self.pub_land.publish()
+                self.land = True
                 return
         return
 

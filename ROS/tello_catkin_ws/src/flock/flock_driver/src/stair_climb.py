@@ -46,7 +46,7 @@ class TelloAuto(object):
         self.point_command_pos_yaw = 0.0
 
 
-        self.trajectory_threshold = Point(0.35, 0.35, 0.35)
+        self.trajectory_threshold = Point(0.15, 0.15, 0.15)
         self.trajectory_orientation_threshold = Point(3, 3, 3)
         self.trajectory_list = []
         self.last_trajectory = []
@@ -213,15 +213,14 @@ class TelloAuto(object):
                 #rospy.loginfo("Trajectory quit due to losing reference")
                 #return
             
-            if self.altitude > 1.55:
-                self.pub_land.publish()
-                rospy.loginfo("Finished climbing stairs")
-                return
+            # if self.altitude > 1.55:
+            #     self.pub_land.publish()
+            #     rospy.loginfo("Finished climbing stairs")
+            #     return
             
             if self.isClose and not self.prevClose:
                 self.prevClose = self.isClose
                 rospy.loginfo("Trajectory Modified due to collision warning")
-                #self.trajectory_list = [[self.real_world_pos.x, self.real_world_pos.y,self.real_world_pos.z + 1,0],[(self.real_world_pos.x+1.5), self.real_world_pos.y, self.real_world_pos.z + 1,0]]
                 self.trajectory_list = [[self.real_world_pos.x, 0,self.real_world_pos.z + .15,0],[(self.real_world_pos.x+1.4), 0, self.real_world_pos.z + .15,0]]
 
             if abs(command_pos.position.x - self.real_world_pos.x) < self.trajectory_threshold.x:
@@ -249,8 +248,14 @@ class TelloAuto(object):
 
             else:
                 rospy.loginfo("Trajectory Finished")
-                self.pub_land.publish()
-                return
+                if self.altitude > 1.2:
+                    self.pub_land.publish()
+                    rospy.loginfo("Finished climbing stairs")
+                    self.pub_land.publish()
+                    return
+                else:
+                    self.trajectory_list = [[self.real_world_pos.x, 0,self.real_world_pos.z,0],[self.real_world_pos.x+0.4, 0,self.real_world_pos.z+0.15,0]]
+
             
             print(self.real_world_pos)
         return

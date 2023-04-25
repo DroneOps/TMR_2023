@@ -210,6 +210,7 @@ class TelloAuto(object):
             
             if self.lost:
                 self.pub_land.publish()
+                self.land = True
                 rospy.loginfo("Trajectory quit due to losing reference")
                 return
             
@@ -243,6 +244,7 @@ class TelloAuto(object):
             else:
                 rospy.loginfo("Trajectory Finished")
                 self.pub_land.publish()
+                self.land = True
                 return
             
             print(self.real_world_pos)

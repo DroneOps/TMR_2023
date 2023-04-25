@@ -9,7 +9,7 @@ import subprocess
 import math
 from trimesh import creation, transformations
 
-#time.sleep(30)
+time.sleep(30)
 # load a file by name or from a buffer
 
 file = open("/home/droneops/pc.off","r")

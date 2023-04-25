@@ -38,9 +38,11 @@ class OverrideNode(object):
         self.pub_land.publish()    
 
     def keyboard_checker(self):
-        raw_input()
-        rospy.loginfo("Trajectory quit due to override to landing")
-        self.land_callback()
+        while not rospy.is_shutdown():
+            raw_input()
+            rospy.loginfo("Trajectory quit due to override to landing")
+            self.land_callback()
+            time.sleep(3)
 
     def equipment_status_and_temperature_check(self):
         while not rospy.is_shutdown():

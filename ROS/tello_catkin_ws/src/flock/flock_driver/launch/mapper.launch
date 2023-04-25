@@ -66,7 +66,7 @@
 
 <node name="map_to_csv" pkg="flock_driver" type="point_cloud_filter.py" output="screen"/>
 <node name="override_node" pkg="flock_driver" type="override_node.py" output="screen" launch-prefix="gnome-terminal --command"/>
-<node name="displayer_node" pkg="flock_driver" type="viewer.py" output="screen" launch-prefix="gnome-terminal --command"/>
+<node name="displayer_node" pkg="flock_driver" type="viewer.py" output="screen"/>
 
 </launch>
  
