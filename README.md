@@ -42,20 +42,21 @@ sudo apt-get install python-imaging-tk
 ```
 cd ~/ROS/
 git clone https://github.com/stevenlovegrove/Pangolin.git
+cd Pangolin
 git checkout tags/v0.6
 sudo apt install libgl1-mesa-dev
 sudo apt install libglew-dev
 sudo apt-get install libxkbcommon-dev
-cd Pangolin
 mkdir build
 cd build
 cmake ..
-cmake --build
+make
 ```
 ### Install h264decoder v1
 ```
 cd ~/ROS/
 git clone https://github.com/DaWelter/h264decoder.git
+cd h264decoder
 git checkout tags/v1
 ```
 Inside h264decoder.cpp replace PIX_FMT_RGB24 with AV_PIX_FMT_RGB24
