@@ -80,7 +80,9 @@ Install their version of TelloPY
 ```
 cd ~/ROS/Tello_ROS_ORBSLAM/TelloPy
 sudo python setup.py install
+```
 ROS Dependencies
+```
 cd ~/ROS/Tello_ROS_ORBSLAM/ROS/tello_catkin_ws/
 sudo rosdep init
 rosdep update
