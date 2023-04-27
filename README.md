@@ -73,9 +73,7 @@ sudo cp ~/ROS/h264decoder/libh264decoder.so /usr/local/lib/python2.7/dist-packag
 ```
 ### Install Tello_ROS_ORBSLAM
 ```
-cd ~
-mkdir ROS
-cd ROS
+cd ~/ROS
 git clone https://github.com/tau-adl/Tello_ROS_ORBSLAM.git
 Install their version of TelloPY
 cd ~/ROS/Tello_ROS_ORBSLAM/TelloPy
