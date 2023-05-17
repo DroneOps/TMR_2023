@@ -28,7 +28,7 @@ dpkg -i ffmpeg_3.4.11-0ubuntu0.1_amd64.deb
 pip install av==0.3.3
 ```
 
-### Install catking tools
+### Install catkin tools
 ```
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list'
 wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
@@ -76,38 +76,32 @@ copy to python path
 ```
 sudo cp ~/tello_workspace/h264decoder/libh264decoder.so /usr/local/lib/python2.7/dist-packages
 ```
-### Install Tello_ROS_ORBSLAM
-Inside your workspace
-```
-git clone https://github.com/tau-adl/Tello_ROS_ORBSLAM.git
-```
-Install their version of TelloPY
-```
-cd ~/tello_workspace/Tello_ROS_ORBSLAM/TelloPy
-sudo python setup.py install
-```
-ROS Dependencies
-```
-cd ~/tello_workspace/Tello_ROS_ORBSLAM/ROS/tello_catkin_ws/
-sudo rosdep init
-rosdep update
-rosdep install --from-paths src --ignore-src -r -y
-```
-### Install Orbslam2
-Change the CMakeLists.txt on ~/ros_workspace/Tello_ROS_ORBSLAM/ROS/tello_catkin_ws/src/orb_slam_2_ros/CMakeLists.txt  to the one included in this folder.
-```
-cd ~/tello_workspace/Tello_ROS_ORBSLAM/ROS/tello_catkin_ws/
-catkin init
-catkin clean
-catkin build
-```
-```
-echo "source $PWD/devel/setup.bash" >> ~/.bashrc
-source ~/.bashrc
-```
 ### Clone
 Inside your workspace:
 ```
 git clone https://github.com/DroneOps/TMR_2023.git
 ```
-
+### Install custom TelloPy
+```
+cd ~/tello_workspace/TMR_2023/TelloPy
+sudo python setup.py install
+```
+ROS Dependencies
+```
+cd ~/tello_workspace/TMR_2023/ROS/tello_catkin_ws/
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+```
+### Compile Orbslam2 and Custom Packages
+```
+cd ~/tello_workspace/TMR_2023/ROS/tello_catkin_ws/
+catkin init
+catkin clean
+catkin build
+```
+Might return error when compiling for the first time, simply repeat catkin build command
+```
+echo "source $PWD/devel/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
