@@ -148,32 +148,10 @@ ${LIBS_ROS}
 ${Pangolin_LIBRARIES}
 )
 
-add_executable (${PROJECT_NAME}_stereo
-ros/src/StereoNode.cc
-ros/src/Node.cc
-)
-#add_dependencies (${PROJECT_NAME}_stereo ${PROJECT_NAME} ${PROJECT_NAME}_gencfg)
-
-target_link_libraries(${PROJECT_NAME}_stereo
-${LIBS_ROS}
-${Pangolin_LIBRARIES}
-)
-
-add_executable (${PROJECT_NAME}_rgbd
-ros/src/RGBDNode.cc
-ros/src/Node.cc
-)
-#add_dependencies (${PROJECT_NAME}_rgbd ${PROJECT_NAME} ${PROJECT_NAME}_gencfg)
-
-target_link_libraries(${PROJECT_NAME}_rgbd
-${LIBS_ROS}
-${Pangolin_LIBRARIES}
-)
-
 message(STATUS "printing CATKIN_PACKAGE_LIB_DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}" )
 message(STATUS "printing CATKIN_PACKAGE_BIN_DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}" )
 
-install(TARGETS ${PROJECT_NAME}_mono ${PROJECT_NAME}_stereo ${PROJECT_NAME}_rgbd
+install(TARGETS ${PROJECT_NAME}_mono
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
