@@ -43,6 +43,15 @@ sudo apt install libeigen3-dev
 ```
 sudo apt-get install python-imaging-tk
 ```
+### Create ROS workspace
+```
+source /opt/ros/melodic/setup.bash
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin_make
+source devel/setup.bash
+echo $ROS_PACKAGE_PATH
+```
 ### Install Pangolin v0.6
 Inside your workspace:
 ```
