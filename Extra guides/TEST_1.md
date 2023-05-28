@@ -6,7 +6,7 @@ If you have followed the setup guide correctly you should be almost ready to con
 Follow the main README.md to completion.
 
 ### Get a wifi adapter
-Some computers, because of their wifi adapter incompatibility with Ubuntu 18.04, due to missing drivers, will not be able to get a wifi connection. We must have a wifi connection to communicate with the drone. We recommend buying an adapter like the TP-Link Archer T2U Nano (https://a.co/d/fSW9fIf), because we have tested that it works.
+Some computers, because of their wifi adapter incompatibility with Ubuntu 18.04 and due to missing drivers, will not be able to get a wifi connection. We must have a wifi connection to communicate with the drone. We recommend buying an adapter like the TP-Link Archer T2U Nano (https://a.co/d/fSW9fIf), because we have tested that it works.
 
 
 Note: This recommended adapter's drivers can be acquired following: https://askubuntu.com/questions/1149117/tp-link-ac600-archer-t2u-nano-driver-for-ubuntu-18-04
