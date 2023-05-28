@@ -61,7 +61,7 @@ class TelloAuto(object):
         self.isClose = False
         self.prevClose = False
         self.real_world_scale = 5.21
-        
+         
         rospy.Subscriber(self.publish_prefix+'flight_data', FlightData, self.flightdata_callback)
         rospy.Subscriber(self.publish_prefix+'real_world_scale', Float32, self.real_world_scale_callback)
         rospy.Subscriber(self.publish_prefix+'real_world_pos', PoseStamped, self.real_world_pos_callback)
@@ -222,7 +222,7 @@ class TelloAuto(object):
             if self.isClose and not self.prevClose:
                 self.prevClose = self.isClose
                 rospy.loginfo("Trajectory Modified due to collision warning")
-                self.trajectory_list = [[self.real_world_pos.x, 0,self.real_world_pos.z + 0.5,0],[(self.real_world_pos.x+2), 0, self.real_world_pos.z + 0.5,0]]
+                self.trajectory_list = [[self.real_world_pos.x, 0,self.real_world_pos.z + 1,0],[self.real_world_pos.x+1, 0,self.real_world_pos.z + 1,0],[self.real_world_pos.x+1, 0,self.real_world_pos.z + 2,0],[self.real_world_pos.x+2.5, 0,self.real_world_pos.z + 2,0]]
 
             if abs(command_pos.position.x - self.real_world_pos.x) < self.trajectory_threshold.x:
                 if abs(command_pos.position.y - self.real_world_pos.y) < self.trajectory_threshold.y:
@@ -230,7 +230,6 @@ class TelloAuto(object):
                         if self.find_min_distance_in_orientation(command_yaw, self.orientation_degree.z) < self.trajectory_orientation_threshold.z:
                             self.trajectory_pushup_callback()
                             rospy.loginfo("Reached point")
-                            self.prevClose = False
 
 
             if len(self.trajectory_list) > 0:

@@ -325,7 +325,7 @@ class TelloAuto(object):
         self.allow_slam_control = False
         self.pub_allow_slam_control.publish(self.allow_slam_control)
         time.sleep(13)
-        self.load_trajectory_from_csv('/home/droneops/Documents/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/test.csv')
+        self.load_trajectory_from_csv('/home/pablo/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/test.csv')
         print("Loaded trajectory")
         self.calibrate_z_callback()
         self.allow_slam_control = True

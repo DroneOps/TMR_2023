@@ -16,7 +16,7 @@
       <param name="use_viewer" type="bool" value="true" />
       <param name="load_map" type="bool" value="false" />
       <param name="map_file" type="string" value="labaratory_rot.bin" />
-      <param name="settings_file" type="string" value="$(find orb_slam2_ros)/orb_slam2/config/Tello_mapper.yaml" />
+      <param name="settings_file" type="string" value="$(find orb_slam2_ros)/orb_slam2/config/Tello.yaml" />
       <param name="voc_file" type="string" value="$(find orb_slam2_ros)/orb_slam2/Vocabulary/ORBvoc.txt" />
 
       <param name="pointcloud_frame_id" type="string" value="map" />
@@ -53,20 +53,22 @@
  </node>
 
 
-<node name="tello_slam_control" pkg="flock_driver" type="tello_slam_mapper.py" output="screen">
+<node name="tello_slam_control" pkg="flock_driver" type="tello_slam_control.py" output="screen">
   <param name="~POSE_TOPIC_NAME" type="string" value="/orb_slam2_mono/pose" />
   <param name="ID" type="string" value="" />
 </node>
 
 
-<node name="mapper_trajectory" pkg="flock_driver" type="mapper_trajectory.py" output="screen">
+<node name="stair_climb" pkg="flock_driver" type="stair_dummy.py" output="screen">
   <param name="ID" type="string" value="" />
   <param name="~POSE_TOPIC_NAME" type="string" value="/orb_slam2_mono/pose" />
 </node> 
 
-<!-- <node name="map_to_csv" pkg="flock_driver" type="point_cloud_filter.py" output="screen"/> -->
+<node name="drone_distance_calculator" pkg="flock_driver" type="drone_distance_calculator_stairs.py" output="screen" args = "gnome-terminal">
+  <param name="ID" type="string" value="" />
+  <param name="~POSE_TOPIC_NAME" type="string" value="/orb_slam2_mono/pose" />
+</node> 
+
 <node name="override_node" pkg="flock_driver" type="override_node.py" output="screen" launch-prefix="gnome-terminal --command"/>
-<!-- <node name="displayer_node" pkg="flock_driver" type="viewer.py" output="screen"/> -->
 
 </launch>
- 

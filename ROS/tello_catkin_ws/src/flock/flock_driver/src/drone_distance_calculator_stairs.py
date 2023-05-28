@@ -67,7 +67,9 @@ class DistanceCalculator(object):
                                 temp_map = np.delete(temp_map, (i), axis=0)
                         if(temp_map.shape[0] > 0):
                             temp_map = temp_map[temp_map[:, 0].argsort()]
-                            print(np.mean(temp_map[0:9, 0]*self.real_world_scale) - self.real_world_pos.x)
+                            print(temp_map*self.real_world_scale)
+                            print(np.mean(temp_map*self.real_world_scale))
+                            #print(np.mean(temp_map[0:9, 0]*self.real_world_scale) - self.real_world_pos.x)
                             if(np.mean(temp_map[0:9, 0]*self.real_world_scale) - self.real_world_pos.x < .7):
                                 self.CollisionWarning = True
                 time.sleep(0.2)
@@ -78,3 +80,14 @@ if __name__ == '__main__':
     calculator = DistanceCalculator()
     calculator.calc_distance()
 
+# for i in range(temp_map.shape[0]-1,-1,-1):
+#                             #print(temp_map.shape)
+#                             if((temp_map[i,0]*self.real_world_scale < self.real_world_pos.x) or (temp_map[i,2]*self.real_world_scale<self.real_world_pos.z) or (abs(temp_map[i,1]*self.real_world_scale) >.4)):
+#                                 temp_map = np.delete(temp_map, (i), axis=0)
+#                         if(temp_map.shape[0] > 0):
+#                             temp_map = temp_map[temp_map[:, 0].argsort()]
+#                             print(temp_map*self.real_world_scale)
+#                             print(np.mean(temp_map[0:9, 0]*self.real_world_scale) - self.real_world_pos.x)
+#                             if(np.mean(temp_map[0:9, 0]*self.real_world_scale) - self.real_world_pos.x < 0.6):
+#                                 self.CollisionWarning = True
+#                 time.sleep(0.2)

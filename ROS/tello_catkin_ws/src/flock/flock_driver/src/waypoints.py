@@ -18,7 +18,7 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 class TelloAuto(object):
     """Wrapper class to enable the autonomous navigation."""
     def __init__(self):
-        rospy.init_node('wall_avoider', anonymous=False)
+        rospy.init_node('wall_land', anonymous=False)
 
         try: 
             self.id = rospy.get_param('~ID')
@@ -46,7 +46,7 @@ class TelloAuto(object):
         self.point_command_pos_yaw = 0.0
 
 
-        self.trajectory_threshold = Point(0.15, 0.15, 0.15)
+        self.trajectory_threshold = Point(0.25, 0.25, 0.25)
         self.trajectory_orientation_threshold = Point(3, 3, 3)
         self.trajectory_list = []
         self.last_trajectory = []
@@ -59,7 +59,7 @@ class TelloAuto(object):
         self.kp = Pose() 
         self.lost = False
         self.isClose = False
-        self.prevClose = False
+
         self.real_world_scale = 5.21
         
         rospy.Subscriber(self.publish_prefix+'flight_data', FlightData, self.flightdata_callback)
@@ -204,25 +204,17 @@ class TelloAuto(object):
             if self.land:
                 rospy.loginfo("Trajectory quit due to landing")
                 return
-
             if self.trajectory_kill:
                 rospy.loginfo("Trajectory quit due to killing command")
                 return
-            
-            #if self.lost:
-                #self.pub_land.publish()
-                #rospy.loginfo("Trajectory quit due to losing reference")
-                #return
-            
-            # if self.altitude > 1.55:
+            # if self.lost:
             #     self.pub_land.publish()
-            #     rospy.loginfo("Finished climbing stairs")
+            #     rospy.loginfo("Trajectory quit due to losing reference")
             #     return
-            
-            if self.isClose and not self.prevClose:
-                self.prevClose = self.isClose
-                rospy.loginfo("Trajectory Modified due to collision warning")
-                self.trajectory_list = [[self.real_world_pos.x, 0,self.real_world_pos.z + 0.5,0],[(self.real_world_pos.x+2), 0, self.real_world_pos.z + 0.5,0]]
+            # if self.isClose:
+            #     self.pub_land.publish()
+            #     rospy.loginfo("Trajectory quit due to collision warning")
+            #     return
 
             if abs(command_pos.position.x - self.real_world_pos.x) < self.trajectory_threshold.x:
                 if abs(command_pos.position.y - self.real_world_pos.y) < self.trajectory_threshold.y:
@@ -230,12 +222,12 @@ class TelloAuto(object):
                         if self.find_min_distance_in_orientation(command_yaw, self.orientation_degree.z) < self.trajectory_orientation_threshold.z:
                             self.trajectory_pushup_callback()
                             rospy.loginfo("Reached point")
-                            self.prevClose = False
+                            time.sleep(2)
 
 
             if len(self.trajectory_list) > 0:
-                command_pos.position.x = self.trajectory_list[0][0]
-                command_pos.position.y = self.trajectory_list[0][1]
+                command_pos.position.x = self.trajectory_list[0][0]*1.08
+                command_pos.position.y = self.trajectory_list[0][1]*1.08
                 command_pos.position.z = self.trajectory_list[0][2]
                 command_yaw = self.trajectory_list[0][3]
                 rospy.loginfo(command_pos.position.x)
@@ -249,16 +241,9 @@ class TelloAuto(object):
 
             else:
                 rospy.loginfo("Trajectory Finished")
-                if self.altitude > 1.2:
-                    self.pub_land.publish()
-                    rospy.loginfo("Finished climbing stairs")
-                    self.pub_land.publish()
-                    return
-                else:
-                    self.trajectory_list = [[self.real_world_pos.x, 0,self.real_world_pos.z,0],[self.real_world_pos.x+0.4, 0,self.real_world_pos.z+0.2,0]]
-
-            
-            print(self.real_world_pos)
+                self.pub_land.publish()
+                self.land = True
+                return
         return
 
     def find_min_distance_in_orientation(self, ori1, ori2):
@@ -341,14 +326,14 @@ class TelloAuto(object):
         self.allow_slam_control = False
         self.pub_allow_slam_control.publish(self.allow_slam_control)
         time.sleep(13)
-        self.load_trajectory_from_csv('/home/pablo/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/stairs.csv')
+        self.load_trajectory_from_csv('/home/pablo/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/waypoints.csv')
         print("Loaded trajectory")
         self.calibrate_z_callback()
         self.allow_slam_control = True
         self.pub_allow_slam_control.publish(controller.allow_slam_control)
         self.trajectory_publish_callback()
 
-    def stay_in_place(self):
+    def stay_in_place(self):    
         self.point_command_pos.x = self.real_world_pos.x
         self.point_command_pos.y = self.real_world_pos.y
         self.point_command_pos.z = self.real_world_pos.z
@@ -365,11 +350,9 @@ class TelloAuto(object):
 
     def land_callback(self,msg):
         self.land = True
-    
 
 if __name__ == '__main__':
     controller = TelloAuto()
     controller.init_drone()
-
 
    

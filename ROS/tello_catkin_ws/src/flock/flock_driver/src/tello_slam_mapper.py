@@ -505,7 +505,7 @@ class TelloSlamControler(object):
                 return
             time.sleep(0.2)
             rospy.loginfo('altitude is {}, desired height is {}'.format(self.altitude, self.calib_altitude_low))
-            if time.time() - t > 1:
+            if time.time() - t > 2:
                 if ground_altitude == self.altitude:
                     rospy.loginfo('altitude is fixed, something is wrong.'.format(self.altitude, self.calib_altitude_low))
                     self.pub_twist.publish(self.speed_to_twist())

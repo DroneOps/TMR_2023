@@ -11,9 +11,9 @@ def points_circle(radius,points, height_max, height_min):
              for x in range(0,points+1)]
 
 def write2csv(pointvec):
-    path_file = open('/home/droneops/Documents/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/mapper.csv', 'w')
+    path_file = open('/home/pablo/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/mapper.csv', 'w')
     writer = csv.writer(path_file)
     for coord in pointvec:
         writer.writerow(coord)
 
-write2csv(points_circle(1.05,20,1.1,0.2))
+write2csv(points_circle(1,20,0.7,0.4))

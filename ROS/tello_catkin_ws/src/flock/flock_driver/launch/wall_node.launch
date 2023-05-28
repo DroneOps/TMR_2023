@@ -70,6 +70,6 @@
 </node> 
 
 <node name="override_node" pkg="flock_driver" type="override_node.py" output="screen" launch-prefix="gnome-terminal --command"/>
-
+<node name="logger" pkg="flock_driver" type="data_logger.py" output="screen"/>
 
 </launch>

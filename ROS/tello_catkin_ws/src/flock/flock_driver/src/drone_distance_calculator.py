@@ -66,7 +66,7 @@ class DistanceCalculator(object):
                     if(temp_map.shape[0] > 0 and self.real_world_pos):
                         temp_map = temp_map[temp_map[:, 0].argsort()]
                         print(temp_map[0, 0]*self.real_world_scale - self.real_world_pos.x)
-                        if(temp_map[0, 0]*self.real_world_scale - self.real_world_pos.x < 1.05):
+                        if(temp_map[0, 0]*self.real_world_scale - self.real_world_pos.x < 0.8):
                             self.CollisionWarning = True
             time.sleep(0.2)
         return

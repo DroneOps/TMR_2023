@@ -217,7 +217,7 @@ class TelloAuto(object):
             if self.isClose and not self.prevClose:
                 self.prevClose = self.isClose
                 rospy.loginfo("Trajectory Modified due to collision warning")
-                self.trajectory_list = [[self.real_world_pos.x, (self.real_world_pos.y-1),self.real_world_pos.z,0],[(self.real_world_pos.x+1.5), (self.real_world_pos.y-0.7),self.real_world_pos.z,0]]
+                self.trajectory_list = [[self.real_world_pos.x, (self.real_world_pos.y-2),self.real_world_pos.z,0],[(self.real_world_pos.x+2), (self.real_world_pos.y-2),self.real_world_pos.z,0]]
 
             if abs(command_pos.position.x - self.real_world_pos.x) < self.trajectory_threshold.x:
                 if abs(command_pos.position.y - self.real_world_pos.y) < self.trajectory_threshold.y:
@@ -330,7 +330,7 @@ class TelloAuto(object):
         self.allow_slam_control = False
         self.pub_allow_slam_control.publish(self.allow_slam_control)
         time.sleep(13)
-        self.load_trajectory_from_csv('/home/droneops/Documents/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/test.csv')
+        self.load_trajectory_from_csv('/home/pablo/TMR_2023/ROS/tello_catkin_ws/src/flock/flock_driver/src/test.csv')
         print("Loaded trajectory")
         self.calibrate_z_callback()
         self.allow_slam_control = True

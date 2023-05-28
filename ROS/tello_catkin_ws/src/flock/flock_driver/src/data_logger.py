@@ -37,10 +37,22 @@ class DataLogger(object):
         rospy.Subscriber(self.publish_prefix+'real_world_pos', PoseStamped, self.real_world_pos_callback)
         rospy.Subscriber(self.publish_prefix+'cmd_vel', Twist, self.cmd_vel_callback)
     
+    def relative2absolute_speed(self,cmd_vel, angular_pose):
+        linear_speed = [
+            np.cos(angular_pose) * cmd_vel.linear.x - np.sin(angular_pose) * cmd_vel.linear.y,
+            np.sin(angular_pose) * cmd_vel.linear.x + np.cos(angular_pose) * cmd_vel.linear.y,
+            cmd_vel.linear.z]
+        return linear_speed
     
+    def calc_speed(self,linear_pos, prev_pos, delta_t):
+        linear_vel = [
+            (linear_pos.x - prev_pos[0])/delta_t,
+            (linear_pos.y - prev_pos[1])/delta_t,
+            (linear_pos.z - prev_pos[2])/delta_t,]
+        return linear_vel
+
     def real_world_pos_callback(self, msg):
         self.real_world_pos = msg.pose
-        
 
     def real_world_scale_callback(self, msg):
         self.real_world_scale = float(msg.data)
@@ -53,26 +65,31 @@ class DataLogger(object):
         self.cmd_vel = cmdVel
 
     def generate_logs(self,file_name):
-        path_file = open('/home/droneops/Documents/Datasets/OrbSLAM_dataset/'+file_name, 'w')
+        prev_position = [0, 0, 0]
+        linear_vel = [0,0,0]
+        path_file = open('/home/pablo/Documents/Datasets/orb_slam_dataset/'+file_name, 'w')
         writer = csv.writer(path_file)
-        writer.writerow(['Time',
-                         'Linear Pos X', 'Linear  Pos Y', 'Linear Pos Z', 
-                         'Angular Pos X', 'Angular Pos Y', 'Angular Pos Z', 
-                         'Lineal Vel X' , 'Lineal Vel Y', 'Lineal Vel Z',
-                         'Angular Vel X' , 'Angular Vel Y', 'Angular Vel Z' ])
+        writer.writerow(['time',
+                         'linear_pos_x', 'linear_pos_y', 'linear_pos_z', 
+                         'angular_pos_x', 'angular_pos_y', 'angular_pos_z', 
+                         'cmd_vel_x' , 'cmd_vel_y', 'cmd_vel_z',
+                         'linear_vel_x', 'linear_vel_y', 'linear_vel_z',
+                         'angular_vel_x' , 'angular_vel_y', 'angular_vel_z' ])
         while not rospy.is_shutdown():
+            linear_control_speed = self.relative2absolute_speed(self.cmd_vel, self.real_world_pos.orientation.z)
             row = [rospy.get_rostime().secs,
                    self.real_world_pos.position.x,self.real_world_pos.position.y,self.real_world_pos.position.z,
                    self.real_world_pos.orientation.x,self.real_world_pos.orientation.y,self.real_world_pos.orientation.z,
-                   self.cmd_vel.linear.x,self.cmd_vel.linear.y,self.cmd_vel.linear.z,
-                   self.cmd_vel.angular.x,self.cmd_vel.angular.y,self.cmd_vel.angular.z,]
+                   linear_control_speed[0],linear_control_speed[1],linear_control_speed[2],
+                   linear_vel[0], linear_vel[1], linear_vel[2],
+                   self.cmd_vel.angular.x,self.cmd_vel.angular.y,self.cmd_vel.angular.z]
             writer.writerow(row)
-            time.sleep(0.8)
-            
-    
+            prev_position = [self.real_world_pos.position.x, self.real_world_pos.position.y, self.real_world_pos.position.z]
+            time.sleep(0.05)
+            linear_vel = self.calc_speed(self.real_world_pos.position,prev_position,0.05)
 
 if __name__ == '__main__':
     controller = DataLogger()
-    controller.generate_logs("MapperTest.txt")
+    controller.generate_logs("teleop_testing.txt")
 
    
