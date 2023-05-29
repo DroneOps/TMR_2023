@@ -156,10 +156,11 @@ class GamepadMarshallNode:
                 self.pub_fast_mode.publish(False)
 
             cmd = Twist()
-            cmd.linear.x = self.joy_state.LY
-            cmd.linear.y = self.joy_state.LX
-            cmd.linear.z = self.joy_state.RY
-            cmd.angular.z = self.joy_state.RX
+            cmd.linear.x = self.joy_state.LY*0.4
+            cmd.linear.y = self.joy_state.LX*0.4
+            cmd.linear.z = self.joy_state.RY*0
+            
+            cmd.angular.z = self.joy_state.RX*0
             self.pub_cmd_out.publish(cmd)
 
         # Copy to previous state
